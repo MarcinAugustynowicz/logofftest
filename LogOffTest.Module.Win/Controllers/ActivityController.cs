@@ -25,54 +25,50 @@ namespace LogOffTest.Module.Win.Controllers
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppWindowControllertopic.aspx.
     public partial class ActivityController : WindowController
     {
+        System.Timers.Timer mousetimer;
+        Point lastpos;        
         public ActivityController()
         {   
             InitializeComponent();
             TargetWindowType = WindowType.Main;
-        }
-        protected override void OnFrameAssigned()
-        {
-            base.OnFrameAssigned();            
-        }
+        }        
         protected override void OnActivated()
         {
             base.OnActivated();
-            ((WinWindow)Frame).KeyDown += WindowController1_KeyDown;
+            ((WinWindow)Frame).KeyDown += KeyDown;
             ((WinWindow)Frame).Showing += Setup;            
-        }        
-        System.Timers.Timer mousetimer;
-        Point lastpos;
+        }                
         void Setup(object sender, WinWindowShowingEventArgs e)
         {
             mousetimer = new System.Timers.Timer();
             mousetimer.Elapsed += MouseTimerLoop;
             mousetimer.Interval = 1000;
             mousetimer.AutoReset = true;
-            mousetimer.Enabled = true;                        
-            ((WinWindow)Frame).Form.Activated+= ActivatedEvent;
+            mousetimer.Enabled = true;
+            ((WinWindow)Frame).Form.GotFocus+= Focus;
         }
-        void WindowController1_KeyDown(object sender, KeyEventArgs e)
+        void KeyDown(object sender, KeyEventArgs e)
         {
             ReportActivity();
-        }
-        void ActivatedEvent(object sender, EventArgs e)
+        }        
+        void Focus(object sender, EventArgs e)
         {
-            ReportActivity();
+            ReportActivity();                        
         }        
         void MouseTimerLoop(object senders, ElapsedEventArgs e)
         {
             if (lastpos!= System.Windows.Forms.Cursor.Position)
             {
-                ReportActivity();
+                ReportActivity();                
             }
             lastpos = System.Windows.Forms.Cursor.Position;            
         }
         void ReportActivity()
         {
-            if (Application.MainWindow != null)
+            if (Application.MainWindow != null&&Form.ActiveForm!=null)
             {
                 LogOutController cont = Application.MainWindow.GetController<LogOutController>();
-                cont.UpdateTime();
+                cont.UpdateTime();                
             }
         }
         protected override void OnDeactivated()
@@ -80,8 +76,8 @@ namespace LogOffTest.Module.Win.Controllers
             // Unsubscribe from previously subscribed events and release other references and resources.
             base.OnDeactivated();
             mousetimer.Elapsed -= MouseTimerLoop;
-            ((WinWindow)Frame).Form.Activated -= ActivatedEvent;
-            ((WinWindow)Frame).KeyDown -= WindowController1_KeyDown;
+            ((WinWindow)Frame).Form.GotFocus-= Focus;
+            ((WinWindow)Frame).KeyDown -= KeyDown;
             ((WinWindow)Frame).Showing -= Setup;
         }        
     }    
