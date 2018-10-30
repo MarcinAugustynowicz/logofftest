@@ -146,6 +146,7 @@
     <Compile Include="Controllers\ActivityController.Designer.cs">
       <DependentUpon>ActivityController.cs</DependentUpon>
     </Compile>
+    <Compile Include="IdleNotifier.cs" />
     <Compile Include="WinModule.cs">
       <SubType>Component</SubType>
     </Compile>

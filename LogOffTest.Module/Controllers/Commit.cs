@@ -20,29 +20,28 @@ namespace LogOffTest.Module.Controllers
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppViewControllertopic.aspx.
     public partial class Commit : ViewController
     {
+        private LogOutController cont;
         public Commit()
         {
             InitializeComponent();            
-        }
-        public void commit()
+        }        
+        public void commit(object sender,EventArgs e)
         {
+            //commit changes in the object space
             ObjectSpace.CommitChanges();
-        }
+        }        
         protected override void OnActivated()
         {
+            //subscribe to LoggingOff event of the LogOutController
             base.OnActivated();
-            LogOutController cont=Application.MainWindow.GetController<LogOutController>();
-            cont.commits += commit;
-        }
-        protected override void OnViewControlsCreated()
-        {
-            base.OnViewControlsCreated();
-            // Access and customize the target View control.
-        }
+            cont=Application.MainWindow.GetController<LogOutController>();
+            cont.LoggingOff += commit;
+        }        
         protected override void OnDeactivated()
         {
-            // Unsubscribe from previously subscribed events and release other references and resources.
+            // Unsubscribe from previously subscribed events and release other references and resources.            
             base.OnDeactivated();
+            cont.LoggingOff -= commit;
         }
     }
 }

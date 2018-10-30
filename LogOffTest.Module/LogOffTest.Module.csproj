@@ -91,6 +91,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ActivityControllerBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controllers\ActivityControllerBase.Designer.cs">
+      <DependentUpon>ActivityControllerBase.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\Commit.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Timers;
-using System.Windows.Forms;
+using ActivityWinForms;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
@@ -23,62 +20,24 @@ using LogOffTest.Module.Controllers;
 namespace LogOffTest.Module.Win.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppWindowControllertopic.aspx.
-    public partial class ActivityController : WindowController
+    public partial class ActivityController : ActivityControllerBase
     {
-        System.Timers.Timer mousetimer;
-        Point lastpos;        
+        private IdleNotifier notifier;        
         public ActivityController()
-        {   
+        {
             InitializeComponent();
-            TargetWindowType = WindowType.Main;
-        }        
+            
+        }
         protected override void OnActivated()
         {
             base.OnActivated();
-            ((WinWindow)Frame).KeyDown += KeyDown;
-            ((WinWindow)Frame).Showing += Setup;            
-        }                
-        void Setup(object sender, WinWindowShowingEventArgs e)
-        {
-            mousetimer = new System.Timers.Timer();
-            mousetimer.Elapsed += MouseTimerLoop;
-            mousetimer.Interval = 1000;
-            mousetimer.AutoReset = true;
-            mousetimer.Enabled = true;
-            ((WinWindow)Frame).Form.GotFocus+= Focus;
+            ((WinWindow)Frame).Showing += SetupNotifier;
         }
-        void KeyDown(object sender, KeyEventArgs e)
-        {
-            ReportActivity();
+        public void SetupNotifier(object sender, EventArgs e)
+        {            
+            notifier = new IdleNotifier(((WinWindow)Frame).Form, idleTime);
+            ((WinWindow)Frame).Form.KeyPreview = true;
+            notifier.Idle += base.ReportIdleEvent;
         }        
-        void Focus(object sender, EventArgs e)
-        {
-            ReportActivity();                        
-        }        
-        void MouseTimerLoop(object senders, ElapsedEventArgs e)
-        {
-            if (lastpos!= System.Windows.Forms.Cursor.Position)
-            {
-                ReportActivity();                
-            }
-            lastpos = System.Windows.Forms.Cursor.Position;            
-        }
-        void ReportActivity()
-        {
-            if (Application.MainWindow != null&&Form.ActiveForm!=null)
-            {
-                LogOutController cont = Application.MainWindow.GetController<LogOutController>();
-                cont.UpdateTime();                
-            }
-        }
-        protected override void OnDeactivated()
-        {
-            // Unsubscribe from previously subscribed events and release other references and resources.
-            base.OnDeactivated();
-            mousetimer.Elapsed -= MouseTimerLoop;
-            ((WinWindow)Frame).Form.GotFocus-= Focus;
-            ((WinWindow)Frame).KeyDown -= KeyDown;
-            ((WinWindow)Frame).Showing -= Setup;
-        }        
-    }    
+    }
 }
