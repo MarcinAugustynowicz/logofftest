@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using DevExpress.Data.Filtering;
@@ -17,18 +18,19 @@ using DevExpress.Persistent.Validation;
 namespace LogOffTest.Module.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppWindowControllertopic.aspx.
-    public partial class ActivityControllerBase : WindowController
+    public partial class IdleControllerBase : WindowController
     {
         //base class for calling user activity event by platform specific controller ActivityController
         public event EventHandler<EventArgs> UserIdle;
-        public TimeSpan idleTime=new TimeSpan(0,0,5);
+        public TimeSpan idleTime = new TimeSpan(0, 0, 10);
         public void ReportIdleEvent(object sender, EventArgs e)
         {
             UserIdle?.Invoke(this, new EventArgs());
         }
-        public ActivityControllerBase()
+        public IdleControllerBase()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            TargetWindowType = WindowType.Main;
             // Target required Windows (via the TargetXXX properties) and create their Actions.
         }
         protected override void OnActivated()

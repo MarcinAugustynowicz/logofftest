@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using ActivityWinForms;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
@@ -20,24 +21,36 @@ using LogOffTest.Module.Controllers;
 namespace LogOffTest.Module.Win.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppWindowControllertopic.aspx.
-    public partial class ActivityController : ActivityControllerBase
+    public partial class IdleController : IdleControllerBase
     {
-        private IdleNotifier notifier;        
-        public ActivityController()
-        {
-            InitializeComponent();
-            
+        Timer timer;        
+        public IdleController(TimeSpan idleThreshold)
+        {            
+            timer = new Timer();
+            timer.Enabled = false;
+            timer.Interval = (int)idleThreshold.TotalMilliseconds;
+            timer.Tick += base.ReportIdleEvent;
         }
+
         protected override void OnActivated()
         {
-            base.OnActivated();
-            ((WinWindow)Frame).Showing += SetupNotifier;
+            base.OnActivated();            
         }
-        public void SetupNotifier(object sender, EventArgs e)
-        {            
-            notifier = new IdleNotifier(((WinWindow)Frame).Form, idleTime);
-            ((WinWindow)Frame).Form.KeyPreview = true;
-            notifier.Idle += base.ReportIdleEvent;
-        }        
+        public void ResetTimer(object sender, EventArgs e)
+        {
+            timer.Stop();
+            timer.Start();
+        }
+        public void Start()
+        {
+            timer.Start();
+        }
+        public void Stop()
+        {
+            timer.Stop();
+        }      
+
     }
 }
+
+

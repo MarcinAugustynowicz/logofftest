@@ -1,6 +1,6 @@
 ﻿namespace LogOffTest.Module.Win.Controllers
 {
-    partial class ActivityController
+    partial class ActivityReportController
     {
         /// <summary>
         /// Required designer variable.

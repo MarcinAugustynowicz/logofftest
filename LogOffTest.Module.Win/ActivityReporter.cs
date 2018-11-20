@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -8,31 +9,25 @@ using System.Windows.Forms;
 
 namespace ActivityWinForms
 {
-    public class IdleNotifier : IMessageFilter
+    public class ActivityReporter : IMessageFilter
     {
-        private Form form;
-        private Timer timer;
+        private Form form;        
         // following is a standard way of creating event handlers
         // but can be simply written like this: "public event EventHandler Inactive;"
-        private event EventHandler idle;
-        public event EventHandler Idle
+        private event EventHandler activity;
+        public event EventHandler Activity
         {
-            add { idle += value; }
-            remove { idle -= value; }
+            add { activity += value; }
+            remove { activity -= value; }
         }
-        protected virtual void OnIdle()
+        protected virtual void ReportActivity()
         {
-            idle?.Invoke(this, EventArgs.Empty);
+            Debug.Write("ACTIVITY");
+            activity?.Invoke(this, EventArgs.Empty);
         }
-
-        public IdleNotifier(Form form, TimeSpan idleThreshold)
+        public ActivityReporter(Form form)
         {
             this.form = form;
-            timer = new Timer();
-            timer.Enabled = false;
-            timer.Interval = (int)idleThreshold.TotalMilliseconds;
-            timer.Tick += Timer_Tick;
-
             // register monitored events on the form - all these events represent user activity
             // TODO: this is not complete, its just an example of how this can work
             
@@ -49,51 +44,31 @@ namespace ActivityWinForms
         }
         private void Form_Move(object sender, EventArgs e)
         {
-            ResetTimer();
+            ReportActivity();
         }
         private void Form_MouseClick(object sender, MouseEventArgs e)
         {
-            ResetTimer();
+            ReportActivity();
         }
         private void Form_KeyDown(object sender, KeyEventArgs e)
         {
-            ResetTimer();
+            ReportActivity();
         }
         private void Form_Deactivate(object sender, EventArgs e)
         {
-            ResetTimer();
+            ReportActivity();
         }
         private void Form_Activated(object sender, EventArgs e)
         {
-            ResetTimer();
-        }
-
-        private void ResetTimer()
-        {
-            timer.Stop();
-            timer.Start();
-        }
-        public void Start()
-        {
-            timer.Start();
-        }
-        public void Stop()
-        {
-            timer.Stop();
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {   // there was no activity for specified period of time
-            OnIdle();
+            ReportActivity();
         }
         const int WM_MOUSEMOVE = 0x0200;
-
         public bool PreFilterMessage(ref Message m)
         {
             if (m.Msg == WM_MOUSEMOVE)
             {
                 if (Form.ActiveForm == form)
-                    ResetTimer();
+                    ReportActivity();
             }
             return false;
         }

@@ -140,13 +140,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\ActivityController.cs">
+    <Compile Include="Controllers\ActivityReportController.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controllers\ActivityController.Designer.cs">
-      <DependentUpon>ActivityController.cs</DependentUpon>
+    <Compile Include="Controllers\ActivityReportController.Designer.cs">
+      <DependentUpon>ActivityReportController.cs</DependentUpon>
     </Compile>
-    <Compile Include="IdleNotifier.cs" />
+    <Compile Include="ActivityReporter.cs" />
+    <Compile Include="Controllers\IdleController.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controllers\IdleController.Designer.cs">
+      <DependentUpon>IdleController.cs</DependentUpon>
+    </Compile>
     <Compile Include="WinModule.cs">
       <SubType>Component</SubType>
     </Compile>

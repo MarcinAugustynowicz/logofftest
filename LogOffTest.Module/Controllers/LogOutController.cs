@@ -30,7 +30,7 @@ namespace LogOffTest.Module.Controllers
         public event EventHandler<EventArgs> LoggingOff;
         //timer used for logging of at logoutTime
         private Timer LogOffTimer;       
-        private ActivityControllerBase cont;
+        private IdleControllerBase cont;
         private bool started;
         public LogOutController()
         {
@@ -67,7 +67,7 @@ namespace LogOffTest.Module.Controllers
         protected override void OnFrameAssigned()
         {
             base.OnFrameAssigned();
-            cont = Frame.GetController<ActivityControllerBase>();
+            cont = Frame.GetController<IdleControllerBase>();
             cont.UserIdle += LogOff;
             Frame.TemplateChanged += Setup;
         }        

@@ -1,6 +1,6 @@
-﻿namespace LogOffTest.Module.Controllers
+﻿namespace LogOffTest.Module.Win.Controllers
 {
-    partial class ActivityControllerBase
+    partial class IdleController
     {
         /// <summary>
         /// Required designer variable.
